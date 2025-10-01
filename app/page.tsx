@@ -116,31 +116,12 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b bg-card">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-foreground">PocketTracker</h1>
-              <p className="text-muted-foreground">Welcome back, {userEmail}</p>
-            </div>
-            <div className="flex items-center gap-4">
-              <Link href="/recommendations">
-                <Button className="gap-2">
-                  <Lightbulb className="h-4 w-4" />
-                  Get Recommendations
-                </Button>
-              </Link>
-              <Button variant="outline" onClick={handleLogout} className="gap-2 bg-transparent">
-                <LogOut className="h-4 w-4" />
-                Logout
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
-
       <main className="container mx-auto px-4 py-8">
+        {/* Welcome Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-foreground mb-2">Financial Dashboard</h1>
+          <p className="text-muted-foreground">Welcome back, {userEmail}</p>
+        </div>
         {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <Card>
@@ -313,13 +294,13 @@ export default function Dashboard() {
                     outerRadius={100}
                     fill="#8884d8"
                     dataKey="value"
-                    label={({ name, value }) => `${name}: $${value.toLocaleString()}`}
+                    label={(entry: any) => `${entry.name}: $${Number(entry.value).toLocaleString()}`}
                   >
                     {mockPortfolioData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
-                  <Tooltip formatter={(value) => `$${value.toLocaleString()}`} />
+                  <Tooltip formatter={(value: any) => `$${Number(value).toLocaleString()}`} />
                 </PieChart>
               </ResponsiveContainer>
             </CardContent>
