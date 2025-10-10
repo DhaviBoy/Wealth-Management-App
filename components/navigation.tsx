@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation"
 import { useState, useEffect } from "react"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 import {
   Home,
   DollarSign,
@@ -15,6 +16,8 @@ import {
   LogOut,
   Menu,
   X,
+  Wallet,
+  User,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
@@ -88,46 +91,76 @@ export function Navigation() {
   }
 
   return (
-    <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <nav className="sticky top-0 z-50 w-full border-b border-border/40 bg-gradient-to-r from-background via-background to-background/95 backdrop-blur-xl supports-[backdrop-filter]:bg-background/80 shadow-sm">
+      {/* Decorative gradient line */}
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
+      
       <div className="container flex h-16 items-center px-4">
-        <div className="mr-4 flex">
-          <Link href="/" className="mr-6 flex items-center space-x-2">
-            <Briefcase className="h-6 w-6" />
-            <span className="hidden font-bold sm:inline-block">
-              Wealth Manager
-            </span>
+        {/* Logo */}
+        <div className="mr-6 flex">
+          <Link href="/" className="group flex items-center space-x-3 transition-all">
+            <div className="relative">
+              <div className="absolute inset-0 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 opacity-0 blur transition-opacity group-hover:opacity-20" />
+              <div className="relative flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 shadow-lg transition-transform group-hover:scale-110">
+                <Wallet className="h-5 w-5 text-white" />
+              </div>
+            </div>
+            <div className="hidden sm:block">
+              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-lg font-bold text-transparent dark:from-blue-400 dark:to-purple-400">
+                Wealth Manager
+              </span>
+            </div>
           </Link>
         </div>
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex md:flex-1 md:items-center md:justify-between">
-          <nav className="flex items-center space-x-6 text-sm font-medium">
+          <nav className="flex items-center space-x-2">
             {navigationItems.map((item) => {
               const Icon = item.icon
+              const isActive = pathname === item.href
               return (
                 <Link
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    "flex items-center space-x-2 transition-colors hover:text-foreground/80",
-                    pathname === item.href
-                      ? "text-foreground"
-                      : "text-foreground/60"
+                    "group relative flex items-center space-x-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200",
+                    isActive
+                      ? "bg-gradient-to-r from-blue-500/10 to-purple-500/10 text-foreground shadow-sm dark:from-blue-500/20 dark:to-purple-500/20"
+                      : "text-muted-foreground hover:bg-accent hover:text-foreground"
                   )}
                 >
-                  <Icon className="h-4 w-4" />
-                  <span>{item.title}</span>
+                  {isActive && (
+                    <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-blue-500/20 to-purple-500/20 blur-sm" />
+                  )}
+                  <Icon className={cn(
+                    "relative h-4 w-4 transition-transform group-hover:scale-110",
+                    isActive && "text-blue-600 dark:text-blue-400"
+                  )} />
+                  <span className="relative">{item.title}</span>
+                  {isActive && (
+                    <div className="absolute -bottom-1 left-1/2 h-0.5 w-8 -translate-x-1/2 rounded-full bg-gradient-to-r from-blue-500 to-purple-500" />
+                  )}
                 </Link>
               )
             })}
           </nav>
 
-          <div className="flex items-center space-x-4">
-            <span className="text-sm text-muted-foreground">{userEmail}</span>
+          <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-2 rounded-lg bg-muted/50 px-3 py-1.5">
+              <User className="h-3.5 w-3.5 text-muted-foreground" />
+              <span className="text-sm font-medium text-foreground">{userEmail}</span>
+            </div>
             <ThemeToggle />
-            <Button variant="ghost" size="sm" onClick={handleLogout}>
-              <LogOut className="mr-2 h-4 w-4" />
-              Logout
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={handleLogout}
+              className="group relative overflow-hidden transition-all hover:shadow-md"
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-red-500/10 to-orange-500/10 opacity-0 transition-opacity group-hover:opacity-100" />
+              <LogOut className="relative mr-2 h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+              <span className="relative">Logout</span>
             </Button>
           </div>
         </div>
@@ -152,38 +185,46 @@ export function Navigation() {
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="container border-t md:hidden">
-          <nav className="flex flex-col space-y-3 py-4">
+        <div className="container border-t border-border/40 bg-background/95 backdrop-blur-xl md:hidden">
+          <nav className="flex flex-col space-y-2 py-4">
             {navigationItems.map((item) => {
               const Icon = item.icon
+              const isActive = pathname === item.href
               return (
                 <Link
                   key={item.href}
                   href={item.href}
                   onClick={() => setMobileMenuOpen(false)}
                   className={cn(
-                    "flex items-center space-x-2 rounded-md px-3 py-2 text-sm transition-colors hover:bg-accent",
-                    pathname === item.href
-                      ? "bg-accent text-accent-foreground"
-                      : "text-foreground/60"
+                    "group relative flex items-center space-x-3 rounded-lg px-4 py-3 text-sm font-medium transition-all",
+                    isActive
+                      ? "bg-gradient-to-r from-blue-500/10 to-purple-500/10 text-foreground shadow-sm dark:from-blue-500/20 dark:to-purple-500/20"
+                      : "text-muted-foreground hover:bg-accent hover:text-foreground"
                   )}
                 >
-                  <Icon className="h-4 w-4" />
-                  <span>{item.title}</span>
+                  <Icon className={cn(
+                    "h-5 w-5 transition-transform group-hover:scale-110",
+                    isActive && "text-blue-600 dark:text-blue-400"
+                  )} />
+                  <span className="flex-1">{item.title}</span>
+                  {isActive && (
+                    <div className="h-2 w-2 rounded-full bg-gradient-to-r from-blue-500 to-purple-500" />
+                  )}
                 </Link>
               )
             })}
-            <div className="border-t pt-3">
-              <div className="px-3 pb-2 text-sm text-muted-foreground">
-                {userEmail}
+            <div className="mt-4 space-y-3 border-t border-border/40 pt-4">
+              <div className="flex items-center space-x-2 rounded-lg bg-muted/50 px-4 py-2">
+                <User className="h-4 w-4 text-muted-foreground" />
+                <span className="text-sm font-medium text-foreground">{userEmail}</span>
               </div>
               <Button
-                variant="ghost"
+                variant="outline"
                 size="sm"
-                className="w-full justify-start"
+                className="group w-full justify-start transition-all hover:shadow-md"
                 onClick={handleLogout}
               >
-                <LogOut className="mr-2 h-4 w-4" />
+                <LogOut className="mr-2 h-4 w-4 transition-transform group-hover:translate-x-0.5" />
                 Logout
               </Button>
             </div>
